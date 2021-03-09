@@ -15,12 +15,30 @@ To try this out, clone it into $GOPATH/src/k8s-quickstart
 
 install chocolatey: https://chocolatey.org/install
 
-Run the bash script: windows-startup.sh
+Run the bash script: `windows-startup.sh`
 (If you do not run with elevated permissions, it will ask you to confirm installations)
+Default cluster name is local-dev which can be overridden by passing in a name as a parameter.
+
+
+## Teardown
+
+Since the entire cluster is build into and deployed in Docker, it can very easily be wiped clean to start again.
+Run the bash script: `teardown.sh`
+Default cluster name is local-dev which can be overridden by passing in a name as a parameter. The kind cluster with this name will be taken offline and deleted
+All tool installations will remain
+
+
+## Dashboard
+
+To access the Linkerd dashboard run: `linkerd dashboard`
+The dashboard will only be accessible as long as the command is running
+
+To access the Kubernetes dashboard run the bash script: `k-dashboard.sh`
+You will need to use the token printed to console to log into the dashboard
+The dashboard will only be accessible as long as the command is running
 
 
 ## Features
-
 
 ### Docker
 
@@ -94,7 +112,7 @@ However the point of this quickstart is to allow a developer to skip all of that
 With this in mind, the following are the specific areas that will need tweaking/duplicating to add more microservices/connectivity.
 
 
-### kubernetes.yml
+### kubernetes/quickstart.yml
 
 This file contains the desired state of all of the code deployed to kubernetes. A developer needs to pay particular attention to three types of resources (denoted by a sections "kind"): Deployment, Service, and Ingress
 
@@ -143,3 +161,11 @@ It works by:
 * Transferring the Go executable and internal certificates
 
 Lines 27-31 are the only lines that will potentially change from microservice to microservice. They relate to copying source code from the local directory to the directory pattern that Go expects.
+
+
+## skaffold.yml
+
+This file contains the configuration for skaffold to automatically build and deploy code.
+
+* build.artifacts.image: Name of the docker image to be created. This will correspond to the a deployment's spec.template.spec.containers.image in quickstart.yml
+* build.artifacts.image.docker.dockerfile: Name of the dockerfile to build the image from

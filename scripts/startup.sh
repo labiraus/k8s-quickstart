@@ -1,17 +1,5 @@
 #!/bin/bash
 
-name="${1:-local-dev}"
-
-choco install -y docker-desktop --pre 
-
-choco install -y kind --pre 
-
-choco install -y kubernetes-helm --pre 
-
-choco install -y skaffold --pre 
-
-choco install -y linkerd2 --pre 
-
 cat <<EOF | kind create cluster --name local-dev --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
@@ -40,7 +28,3 @@ linkerd check
 
 # installing ingress for kind
 linkerd inject - | kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
-
-linkerd dashboard & 
-
-skaffold dev

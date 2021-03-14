@@ -4,10 +4,13 @@ metadata:
   name: k8s-quickstart
 build:
   artifacts:
-  - image: hello
+  - image: web
     docker:
-      dockerfile: hello.Dockerfile
+      dockerfile: web.Dockerfile
+  - image: user
+    docker:
+      dockerfile: user.Dockerfile
 deploy:
   kubectl:
     manifests:
-    - kubernetes/quickstart.yml
+    - kubernetes/k8s-quickstart.yml

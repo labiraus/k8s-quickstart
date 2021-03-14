@@ -25,7 +25,7 @@ RUN adduser \
 
 # Copy source code from local directories
 WORKDIR $GOPATH/src/k8s-quickstart/
-COPY ./app/hello .
+COPY ./app/web .
 COPY ./pkg ./pkg
 COPY go.mod .
 COPY go.sum .

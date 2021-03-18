@@ -5,12 +5,14 @@ metadata:
 build:
   artifacts:
   - image: web
+    context: ./apps/web
     docker:
-      dockerfile: web.Dockerfile
+      dockerfile: dockerfile
   - image: user
+    context: ./apps/user
     docker:
-      dockerfile: user.Dockerfile
+      dockerfile: dockerfile
 deploy:
   kubectl:
     manifests:
-    - kubernetes/k8s-quickstart.yml
+    - /kubernetes/k8s-quickstart.yml

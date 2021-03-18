@@ -25,13 +25,12 @@ RUN adduser \
 
 # Copy source code from local directories
 WORKDIR $GOPATH/src/k8s-quickstart/
-COPY ./app/web .
-COPY ./pkg ./pkg
-COPY go.mod .
-COPY go.sum .
+
+COPY . .
 
 # Fetch dependencies.
 RUN go get -d -v
+
 
 # Build the binary
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \

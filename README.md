@@ -1,11 +1,19 @@
 # k8s-quickstart
 
-A simple quickstart demo for local Go microservice development
+A simple quickstart demo for local microservice development
 
-The idea is to create an out of the box kubernetes cluster with containerized Go code, ingress control, service mesh, and automatic deployment.
-This repository was designed to enable a Go developer with minimal understanding of infrastructure or platform engineering to go from developing single isolated Go applications to networking multiple applications together in a local development environment that could accurately mirror production.
+The idea is to create an out of the box kubernetes cluster with containerized code, ingress control, service mesh, and automatic deployment.
+This repository was designed to enable a developer with minimal understanding of infrastructure or platform engineering to go from developing single isolated applications to networking multiple applications together in a local development environment that could accurately mirror production.
 
-This example is for demonstration purposes only and doesn't represent good Go repo management. For further details see: <https://golang.org/doc/gopath_code>
+## Repo structure
+
+This repository has been designed to separate code in an easily readable format for demonstration purposes rather than to as a recommended structure. Specifically it doesn't represent good Go repo management (further details see: <https://golang.org/doc/gopath_code>)
+
+All microservices are contained in a folder within the `/apps` folder. They each have a dockerfile that describes how to build that specific microservice
+
+The `/kubernetes` configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
+
+The `/scripts` folder contains bash scripts that allow you to setup/tear down an environment and perform some of the more common operations that are not simple cli calls.
 
 ## Quickstart
 
@@ -16,6 +24,10 @@ To try this out, clone it into $GOPATH/src/k8s-quickstart
 install chocolatey: <https://chocolatey.org/install>
 
 Run the bash script: `scripts/windows-install.sh` with elevated permissions
+
+### Linux
+
+Run the bash script: `scripts/linux-install.sh` with elevated permissions
 
 ### Startup
 
@@ -121,7 +133,7 @@ However the point of this quickstart is to allow a developer to skip all of that
 
 With this in mind, the following are the specific areas that will need tweaking/duplicating to add more microservices/connectivity.
 
-### kubernetes/quickstart.yml
+### kubernetes/k8s-quickstart.yml
 
 This file contains the desired state of all of the code deployed to kubernetes. A developer needs to pay particular attention to three types of resources (denoted by a sections "kind"): Deployment, Service, and Ingress
 
@@ -153,9 +165,9 @@ An ingress ties the ingress provider (ingress-nginx) to a service allowing conne
 * spec.rules.http.paths.path: matches inbound paths depending on pathType
 * spec.rules.http.pths.backend.service.name: Name of the service
 
-## hello.Dockerfile
+### user/dockerfile
 
-This file provides instructions to Docker on how to build the Go code's scratch container.
+This file provides instructions to Docker on how to build the Go code's scratch container and will only need changing to add in local dependencies.
 
 It works by:
 
@@ -166,9 +178,7 @@ It works by:
 * Creating a scratch container
 * Transferring the Go executable and internal certificates
 
-Lines 27-31 are the only lines that will potentially change from microservice to microservice. They relate to copying source code from the local directory to the directory pattern that Go expects.
-
-## skaffold.yml
+### skaffold.yml
 
 This file contains the configuration for skaffold to automatically build and deploy code.
 

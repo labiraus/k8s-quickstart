@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"k8s-quickstart/pkg/api"
-	"k8s-quickstart/pkg/types/user"
 	"log"
 	"net/http"
 	"os"
@@ -14,7 +12,7 @@ import (
 func main() {
 	fmt.Println("user starting")
 	ctx, ctxDone := context.WithCancel(context.Background())
-	done := api.StartBasicApi(ctx, userHandler)
+	done := StartBasicApi(ctx, userHandler)
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	s := <-c
@@ -31,15 +29,15 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	var request = user.UserRequest{}
-	err := api.UnmarshalRequest(&request, r)
+	var request = UserRequest{}
+	err := UnmarshalRequest(&request, r)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	fmt.Printf("user handler got %#v\n", request)
 
-	response := user.UserResponse{Greeting: "from " + request.UserName}
+	response := UserResponse{Greeting: "from " + request.UserName}
 	fmt.Printf("user handler sending %#v\n", response)
-	api.MarshalResponse(response, w)
+	MarshalResponse(response, w)
 }

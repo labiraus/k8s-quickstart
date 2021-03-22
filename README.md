@@ -27,13 +27,14 @@ Run the bash script: `scripts/windows-install.sh` with elevated permissions
 
 ### Linux
 
-Run the bash script: `scripts/linux-install.sh` with elevated permissions
+Due to the variety of distributions of Linux, there's no single way to install all of the tools required.
+As such, this system will require:
 
-### Startup
-
-Once all the tools are installed and docker is running, the startup script will create a kind cluster and install linkerd and nginx
-Run the bash script: `scripts/startup.sh`
-Throughout the cluster name `local-dev` is used.
+* docker: <https://docs.docker.com/engine/install/>
+* kind: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
+* kubernetes-helm: <https://helm.sh/docs/intro/install/>
+* skaffold: <https://skaffold.dev/docs/install/>
+* linkerd2: <https://linkerd.io/2.10/getting-started/>
 
 ### Skaffold
 
@@ -46,20 +47,40 @@ This will cause scaffold to:
 
 Running `skaffold dev` will run the skaffold deployment and then monitor for any changes to source files, redeploying whenever a change is made.
 
-### Attach
+### Scripts
+
+The scripts folder has a number of useful scripts for interacting with kubernetes and containers
+
+#### Startup
+
+Once all the tools are installed and docker is running, the startup script will create a kind cluster and install linkerd and nginx
+Run the bash script: `scripts/startup.sh`
+Throughout the cluster name `local-dev` is used.
+
+#### Attach
 
 To attach to a running process and see the console output run the attach bash script with the name of one of the services: `scripts/attach.sh web`
 
 `skaffold dev` will also display the console output of all deployed microservices
 
-### Teardown
+#### Shell
+
+To connect to a container that has bash installed, run: `scripts/shell.sh <name>`
+The script will find the pod name and execute /bin/bash. To work, the pod deployment must have spec.template.spec.containers.tty and spec.template.spec.containers.stdin set to true in the kubernetes yaml definition. This has been setup on the `web` deployment.
+
+#### Port-Forward
+
+To connect to a specific port in a container that is not exposed via the nginx ingress controller, that port can be manually forwarded. This lasts for the duration of the command.
+Kubernetes port forwarding to a pod requires you to use the specific pod deployment name, which changes every time it's re-deployed. Use `scripts/port-forward <name> <port>`
+
+#### Teardown
 
 Since the entire cluster is build into and deployed in Docker, it can very easily be wiped clean to start again.
 Run the bash script: `scripts/teardown.sh`
 Default cluster name is local-dev which can be overridden by passing in a name as a parameter. The kind cluster with this name will be taken offline and deleted
 All tool installations will remain
 
-### Dashboard
+#### Dashboard
 
 To access the Linkerd dashboard run: `linkerd dashboard`
 The dashboard will only be accessible as long as the command is running

@@ -70,6 +70,8 @@ spec:
     spec:
       containers:
         - name: web
+          tty: true
+          stdin: true
           image: web:latest
           ports:
             - containerPort: 8080

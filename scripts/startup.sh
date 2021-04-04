@@ -24,6 +24,8 @@ linkerd check --pre
 
 linkerd install | kubectl apply -f -
 
+kubectl wait -n linkerd --for=condition=available deployment/linkerd-controller --timeout=120s
+
 linkerd check
 
 echo Installing nginx

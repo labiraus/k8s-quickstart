@@ -33,7 +33,6 @@ metadata:
   name: external-service
   namespace: k8s-quickstart
 spec:
-  type: ClusterIP
   selector:
     app: web
   ports:

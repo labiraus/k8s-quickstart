@@ -33,4 +33,6 @@ echo Installing nginx
 # installing ingress for kind
 linkerd inject https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml | kubectl apply -f -
 
+skaffold run
+
 echo Done!

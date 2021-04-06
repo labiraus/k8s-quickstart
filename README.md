@@ -13,7 +13,7 @@ All microservices are contained in a folder within the `/apps` folder. They each
 
 The `/kubernetes` configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
 
-The `/scripts` folder contains bash scripts that allow you to setup/tear down an environment and perform some of the more common operations that are not simple cli calls.
+The `/scripts` folder contains bash scripts that allow you to starup/teardown an environment and perform some of the more common operations that are not simple cli calls.
 
 ## Quickstart
 
@@ -51,10 +51,10 @@ Running `skaffold dev` will run the skaffold deployment and then monitor for any
 
 The scripts folder has a number of useful scripts for interacting with kubernetes and containers
 
-#### Startup
+#### Setup
 
-Once all the tools are installed and docker is running, the startup script will create a kind cluster and install linkerd and nginx
-Run the bash script: `scripts/startup.sh`
+Once all the tools are installed and docker is running, the setup script will create a kind cluster and install linkerd and nginx
+Run the bash script: `scripts/setup.sh`
 Throughout the cluster name `local-dev` is used.
 
 #### Attach
@@ -82,8 +82,9 @@ All tool installations will remain
 
 #### Dashboard
 
-To access the Linkerd dashboard run: `linkerd dashboard`
+To access the Linkerd dashboard run: `linkerd viz dashboard`
 The dashboard will only be accessible as long as the command is running
+If you get an error that linkerd viz is not installed then you'll need to install it on your cluster with `linkerd viz install | kubectl apply -f -`
 
 To access the Kubernetes dashboard run the bash script: `scripts/dashboard.sh`
 You will need to use the token printed to console to log into the dashboard

@@ -24,7 +24,12 @@ RUN adduser \
     "${USER}"
 
 # Copy source code from local directories
-WORKDIR $GOPATH/src/k8s-quickstart/
+WORKDIR $GOPATH/src/app/
+
+# Downloading the go modules in advance takes advantage of doker's caching
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
 
 COPY . .
 

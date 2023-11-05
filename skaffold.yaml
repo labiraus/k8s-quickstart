@@ -1,0 +1,25 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: k8s-quickstart
+build:
+  artifacts:
+  - image: nodeapi
+    context: ./apps/nodeapi
+    docker:
+      dockerfile: dockerfile
+  - image: userapi
+    context: ./apps/userapi
+    docker:
+      dockerfile: dockerfile
+deploy:
+  helm:
+    releases:
+      - name: nodeapi
+        chartPath: helm/nodeapi
+        valuesFiles:
+          - helm/nodeapi/values.yaml
+      - name: userapi
+        chartPath: helm/userapi
+        valuesFiles:
+          - helm/userapi/values.yaml

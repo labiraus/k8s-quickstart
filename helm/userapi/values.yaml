@@ -1,0 +1,15 @@
+
+appName: userapi
+
+port: 80
+
+namespace: default
+
+configmap:
+  name: userapi-configmap-v1
+  data:
+    CUSTOM_HEADER: 'This app was deployed with helm!'
+
+image:
+  name: userapi
+  tag: latest

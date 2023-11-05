@@ -13,6 +13,8 @@ All microservices are contained in a folder within the `/apps` folder. They each
 
 The `/kubernetes` configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
 
+The `/helm` charts are found in the helm folder. This contains a standard golang microservice chart that sets up fluentd for both logging and stats.
+
 The `/scripts` folder contains bash scripts that allow you to starup/teardown an environment and perform some of the more common operations that are not simple cli calls.
 
 ## Quickstart
@@ -34,6 +36,7 @@ As such, this system will require:
 * kind: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
 * kubernetes-helm: <https://helm.sh/docs/intro/install/>
 * skaffold: <https://skaffold.dev/docs/install/>
+* istio: <https://istio.io/latest/docs/setup/getting-started//>
 * linkerd2: <https://linkerd.io/2.10/getting-started/>
 
 ### Skaffold
@@ -53,8 +56,9 @@ The scripts folder has a number of useful scripts for interacting with kubernete
 
 #### Setup
 
-Once all the tools are installed and docker is running, the setup script will create a kind cluster and install linkerd and nginx
-Run the bash script: `scripts/setup.sh`
+Once all the tools are installed and docker is running, the setup script will create a kind cluster and install istio or linkerd and nginx
+Run the bash script: `scripts/setup-istio.sh`
+Run the bash script: `scripts/setup-linkerd.sh`
 Throughout the cluster name `local-dev` is used.
 
 #### Attach

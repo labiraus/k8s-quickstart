@@ -20,4 +20,8 @@ This requires administrator access and installs skaffold as an app on your machi
 
 This will pull the docker image for skaffold but how do you point skaffold at your local toolset? That's going to need to be a whole separate thing.
 
-Run skaffold in a container that can see your repo, then 
+## Issues
+
+### Kubectl
+
+Skaffold can't do local deployment with manifests for kubectl. It instead uses remote manifests and doesn't recognise your local manifests as existing :P

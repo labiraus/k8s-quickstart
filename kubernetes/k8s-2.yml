@@ -1,0 +1,52 @@
+
+##################################################################################################
+# Reactapp services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: reactapp
+  labels:
+    app: reactapp
+    service: reactapp
+spec:
+  ports:
+  - port: 80
+    name: http
+  selector:
+    app: reactapp
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-reactapp
+  labels:
+    account: reactapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reactapp
+  labels:
+    app: reactapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reactapp
+  template:
+    metadata:
+      labels:
+        app: reactapp
+    spec:
+      serviceAccountName: bookinfo-reactapp
+      containers:
+      - name: reactapp
+        image: reactapp
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+---

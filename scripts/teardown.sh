@@ -1,6 +1,16 @@
 #!/bin/bash
 
-docker stop local-dev-control-plane
-docker rm local-dev-control-plane 
+echo cleaning up helm
+rm -rf ~/.helm/cache/archive/*
+rm -rf ~/.helm/repository/cache/*
+# Refreash repository configurations
+helm repo update
 
-read -p "Hit any key to end"
+echo killing kind
+kind delete cluster --name kind-local-dev
+
+echo killing minikube
+minikube stop -p custom
+minikube delete --all
+
+echo all done

@@ -4,22 +4,31 @@ metadata:
   name: k8s-quickstart
 build:
   artifacts:
-  - image: nodeapi
-    context: ./apps/nodeapi
+#  - image: userapi
+#    context: ./apps/userapi
+#    docker:
+#      dockerfile: dockerfile
+  - image: reactapp
+    context: ./apps/reactapp
     docker:
       dockerfile: dockerfile
-  - image: userapi
-    context: ./apps/userapi
-    docker:
-      dockerfile: dockerfile
-deploy:
-  helm:
-    releases:
-      - name: nodeapi
-        chartPath: helm/nodeapi
-        valuesFiles:
-          - helm/nodeapi/values.yaml
-      - name: userapi
-        chartPath: helm/userapi
-        valuesFiles:
-          - helm/userapi/values.yaml
+manifests:
+  rawYaml:
+      - kubernetes/test.yml
+      - kubernetes/test-gateway.yml
+      - kubernetes/k8s-2.yml
+profiles:
+  - name: gcb
+    build:
+      googleCloudBuild: {}
+  
+#  helm:
+#    releases:
+#      - name: userapi
+#        chartPath: helm/userapi
+#        valuesFiles:
+#          - helm/userapi/values.yaml
+#      - name: reactapp
+#        chartPath: helm/reactapp
+#        valuesFiles:
+#          - helm/reactapp/values.yaml

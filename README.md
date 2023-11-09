@@ -33,11 +33,14 @@ Due to the variety of distributions of Linux, there's no single way to install a
 As such, this system will require:
 
 * docker: <https://docs.docker.com/engine/install/>
-* kind: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
+* local kubernetes cluster, choose one:
+  * kind: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
+  * minikube: <https://minikube.sigs.k8s.io/docs/start/>
 * kubernetes-helm: <https://helm.sh/docs/intro/install/>
 * skaffold: <https://skaffold.dev/docs/install/>
-* istio: <https://istio.io/latest/docs/setup/getting-started//>
-* linkerd2: <https://linkerd.io/2.10/getting-started/>
+* mesh, choose one:
+  * istio: <https://istio.io/latest/docs/setup/getting-started//>
+  * linkerd2: <https://linkerd.io/2.10/getting-started/>
 
 ### Skaffold
 

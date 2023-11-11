@@ -2,10 +2,10 @@
 
 echo Creating minikube cluster
 
-minikube start -p custom --extra-config=apiserver.service-node-port-range=1-65535
+minikube start --extra-config=apiserver.service-node-port-range=1-65535
 
 # Add ingress 
-minikube addons enable ingress -p custom
+minikube addons enable ingress
 
 echo Adding Kubernetes Gateway API CRD
 # This may not be needed in the future
@@ -33,5 +33,4 @@ echo Running Skaffold
 skaffold run
 
 echo All deployed - starting tunnel
-minikube tunnel -c -p custom
-
+minikube tunnel -c

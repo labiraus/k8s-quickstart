@@ -14,9 +14,13 @@ build:
       dockerfile: dockerfile
 manifests:
   rawYaml:
-      - kubernetes/test.yml
-      - kubernetes/test-gateway.yml
-      - kubernetes/k8s-2.yml
+      - kubernetes/gateway.yml
+  helm:
+    releases:
+      - name: reactapp
+        chartPath: helm/reactapp
+        valuesFiles:
+          - helm/reactapp/values.yaml
 profiles:
   - name: gcb
     build:

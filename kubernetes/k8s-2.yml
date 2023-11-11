@@ -3,6 +3,13 @@
 # Reactapp services
 ##################################################################################################
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reactapp
+  labels:
+    account: reactapp
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: reactapp
@@ -11,17 +18,11 @@ metadata:
     service: reactapp
 spec:
   ports:
-  - port: 80
+  - port: 8000
+    targetPort: 80
     name: http
   selector:
     app: reactapp
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: bookinfo-reactapp
-  labels:
-    account: reactapp
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,7 +40,7 @@ spec:
       labels:
         app: reactapp
     spec:
-      serviceAccountName: bookinfo-reactapp
+      serviceAccountName: reactapp
       containers:
       - name: reactapp
         image: reactapp
@@ -49,4 +50,3 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "200m"
----

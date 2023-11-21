@@ -8,6 +8,9 @@ choco upgrade -y docker-desktop
 choco install -y kind
 choco upgrade -y kind
 
+choco install -y minikube
+choco upgrade -y minikube
+
 choco install -y kubernetes-helm
 choco upgrade -y kubernetes-helm
 

@@ -1,5 +1,15 @@
 # Troubleshooting
 
+## Install
+
+### x-kubernetes-validations
+
+During istio setup when activating kubernetes gateway api you may get the following error message:
+
+`error: error validating "STDIN": error validating data: [ValidationError(CustomResourceDefinition.spec.versions[0].schema.openAPIV3Schema.properties.spec.properties.controllerName): unknown field "x-kubernetes-validations"`
+
+This implies that your minikube installation is out of date. Try updating to minikube 1.32.0 or later
+
 ## Unable to connect
 
 ### Minikube Tunnel

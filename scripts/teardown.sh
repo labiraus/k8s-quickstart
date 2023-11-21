@@ -10,7 +10,7 @@ echo killing kind
 kind delete cluster --name kind-local-dev
 
 echo killing minikube
-minikube stop -p custom
+minikube stop
 minikube delete --all
 
 echo all done

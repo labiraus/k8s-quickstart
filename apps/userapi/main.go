@@ -26,7 +26,7 @@ func main() {
 func startApi(ctx context.Context) <-chan struct{} {
 	done := make(chan struct{})
 	srv := &http.Server{Addr: "0.0.0.0:8080"}
-	http.HandleFunc("/", userHandler)
+	http.HandleFunc("/hello", userHandler)
 	go func() {
 		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 			panic("ListenAndServe: " + err.Error())
@@ -67,6 +67,9 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+	if len(request.UserName) == 0 {
+		request.UserName = "A nonny mouse"
 	}
 
 	response := UserResponse{Greeting: "from " + request.UserName}

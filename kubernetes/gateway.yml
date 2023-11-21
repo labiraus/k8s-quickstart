@@ -30,3 +30,10 @@ spec:
     backendRefs:
     - name: reactapp
       port: 8000
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /hello
+    backendRefs:
+    - name: userapi
+      port: 8080

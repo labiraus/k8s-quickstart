@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo Creating minikube cluster
-
+docker context use default
 minikube start --extra-config=apiserver.service-node-port-range=1-65535
 
 # Add ingress 
@@ -9,7 +9,9 @@ minikube addons enable ingress
 
 echo Adding Kubernetes Gateway API CRD
 # This may not be needed in the future
-kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || { kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v0.8.0" | kubectl apply -f -; }
+kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || { kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.0.0" | kubectl apply -f -; }
+
+
 
 echo Pulling istio into helm repo
 

@@ -1,6 +1,6 @@
-module k8s-quickstart
+module userapi
 
-go 1.15
+go 1.21
 
 require (
 )

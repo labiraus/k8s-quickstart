@@ -4,10 +4,10 @@ metadata:
   name: k8s-quickstart
 build:
   artifacts:
-#  - image: userapi
-#    context: ./apps/userapi
-#    docker:
-#      dockerfile: dockerfile
+  - image: webserverapi
+    context: ./apps/webserverapi
+    docker:
+      dockerfile: dockerfile
   - image: reactapp
     context: ./apps/reactapp
     docker:
@@ -21,6 +21,10 @@ manifests:
         chartPath: helm/reactapp
         valuesFiles:
           - helm/reactapp/values.yaml
+      - name: webserverapi
+        chartPath: helm/webserverapi
+        valuesFiles:
+          - helm/webserverapi/values.yaml
 profiles:
   - name: gcb
     build:

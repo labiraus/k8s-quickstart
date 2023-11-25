@@ -8,14 +8,19 @@ function App() {
     console.log("calling hello");
     const res = await fetch('/hello');
     console.log(res);
-    setOutput(res.data);
+    if (res.status !== 200) {
+      alert(res.statusText);
+      return;
+    }
+    const data = await res.json();
+    setOutput(data.Data); 
   }
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
       <button onClick={hello}>click me</button>
-      <p>{output}</p>
+      <p id="output">{output}</p>
       </header>
     </div>
   );

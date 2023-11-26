@@ -12,8 +12,8 @@ function App() {
       alert(res.statusText);
       return;
     }
-    const data = await res.json();
-    setOutput(data.Data); 
+    const response = await res.json();
+    setOutput(response.data); 
   }
   return (
     <div className="App">

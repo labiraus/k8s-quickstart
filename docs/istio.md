@@ -12,7 +12,7 @@ Istio is a service mesh
 
 > choco install -y istio
 > istioctl install --set profile=demo -y
-> kubectl label namespace default istio-injection=enabled
+> kubectl label k8s-demo default istio-injection=enabled
 
 ### Helm
 

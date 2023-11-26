@@ -1,6 +1,6 @@
 # Troubleshooting
 
-## Install
+## Installation errors
 
 ### x-kubernetes-validations
 
@@ -44,3 +44,18 @@ Check that the gateway is BEFORE the deployment/setup etc in the skaffold.yaml
 If there's nothing there then you may not have run `skaffold run`
 
 `curl -s -I -HHost:reactapp.example.com "http://localhost/"`
+
+### Pod
+
+To check the logs on a pod, get the pod name and then look up the logs
+
+> kubectl get pods
+> kubectl logs <pod-name>
+
+Pod to pod calls are managed by kubernetes Services. 
+
+## Docker
+
+In order to allow docker to copy from go-common for a golang docker build, the context needs to be the ./apps folder. To test the build, run the following:
+
+> docker build -t testbuild -f ./apps/webserverapi/dockerfile ./apps

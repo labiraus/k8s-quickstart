@@ -1,63 +1,18 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
-	"os"
-	"os/signal"
-)
 
-const (
-	serviceName = "webserverapi"
-)
-
-var (
-	Info  *log.Logger
-	Error *log.Logger
-	ready chan struct{}
+	"go-common/api"
 )
 
 func main() {
-	ready = make(chan struct{})
-	Info = log.New(os.Stdout, "INFO ["+serviceName+"]: ", log.Ldate|log.Ltime|log.Lshortfile)
-	Error = log.New(os.Stderr, "ERROR ["+serviceName+"]: ", log.Ldate|log.Ltime|log.Lshortfile)
-	Info.Println("starting")
-
-	ctx, ctxDone := context.WithCancel(context.Background())
-	done := startApi(ctx)
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	s := <-c
-	ctxDone()
-	Info.Println("got signal: [" + s.String() + "] now closing")
-	<-done
-}
-
-func startApi(ctx context.Context) <-chan struct{} {
-	done := make(chan struct{})
-	srv := &http.Server{Addr: "0.0.0.0:8080"}
+	done := api.Init("webserverapi")
 	http.HandleFunc("/hello", helloHandler)
-	http.HandleFunc("/readiness", readinessHandler)
-	http.HandleFunc("/liveness", livelinessHandler)
-
-	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-			panic("ListenAndServe: " + err.Error())
-		}
-	}()
-
-	go func() {
-		defer close(done)
-
-		<-ctx.Done()
-		if err := srv.Shutdown(ctx); err != nil {
-			Error.Println("Shutdown: " + err.Error())
-		}
-	}()
-	close(ready)
-	return done
+	<-done
+	api.Info.Println("finishing")
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,14 +20,23 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		r := recover()
 		if err != nil {
-			Error.Println(err)
+			api.Error.Println(err)
 		}
 		if r != nil {
-			Error.Println(r)
+			api.Error.Println(r)
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}()
 
-	response := HelloResponse{Data: "Hello thar!"}
+	api.Info.Println("helloHandler called")
+
+	user, err := GetUser(1)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response := HelloResponse{Data: fmt.Sprintf("Hello %v!", user.Username)}
 
 	data, err := json.Marshal(response)
 	if err != nil {
@@ -85,12 +49,4 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-}
-
-func readinessHandler(w http.ResponseWriter, r *http.Request) {
-	<-ready
-	w.WriteHeader(http.StatusOK)
-}
-func livelinessHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
 }

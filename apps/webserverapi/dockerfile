@@ -8,6 +8,7 @@ FROM ${BUILDER_IMAGE} as builder
 # Git is required for fetching the dependencies.
 # Ca-certificates is required to call HTTPS endpoints.
 RUN apk update && apk add --no-cache git ca-certificates tzdata && update-ca-certificates
+ENV APP_NAME=webserverapi
 
 # Create appuser
 ENV USER=appuser
@@ -24,14 +25,16 @@ RUN adduser \
     "${USER}"
 
 # Copy source code from local directories
-WORKDIR $GOPATH/src/app/
+WORKDIR $GOPATH/src/
+COPY ./go-common/ ./go-common/
 
-# Downloading the go modules in advance takes advantage of doker's caching
-COPY go.mod .
-COPY go.sum .
+# Downloading the go modules in advance takes advantage of docker's caching
+WORKDIR $GOPATH/src/app/
+COPY $APP_NAME/go.mod .
+COPY $APP_NAME/go.sum .
 RUN go mod download
 
-COPY . .
+COPY $APP_NAME/. .
 
 # Fetch dependencies.
 RUN go get -d -v

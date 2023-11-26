@@ -1,89 +1,65 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"log"
+	"io"
 	"net/http"
-	"os"
-	"os/signal"
+
+	"go-common/api"
 )
 
 func main() {
-	fmt.Println("user starting")
-	ctx, ctxDone := context.WithCancel(context.Background())
-	done := startApi(ctx)
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	s := <-c
-	ctxDone()
-	fmt.Println("user got signal: " + s.String() + " now closing")
+	done := api.Init("userapi")
+	http.HandleFunc("/user", userHandler)
 	<-done
-}
-
-func startApi(ctx context.Context) <-chan struct{} {
-	done := make(chan struct{})
-	srv := &http.Server{Addr: "0.0.0.0:8080"}
-	http.HandleFunc("/hello", userHandler)
-	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-			panic("ListenAndServe: " + err.Error())
-		}
-	}()
-	go func() {
-		defer close(done)
-
-		<-ctx.Done()
-		if err := srv.Shutdown(ctx); err != nil {
-			log.Println("Shutdown: " + err.Error())
-		}
-	}()
-
-	return done
 }
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	defer func() {
 		r := recover()
+		if err != nil {
+			api.Error.Println(err)
+		}
 		if r != nil {
-			log.Println(err)
+			api.Error.Println(r)
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}()
 
+	api.Info.Println("userHandler called")
+
 	var request = UserRequest{}
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = json.Unmarshal(body, &request)
 	if err != nil {
-		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if len(request.UserName) == 0 {
-		request.UserName = "A nonny mouse"
+
+	if request.UserID == 0 {
+		request.UserID = 1
 	}
 
-	response := UserResponse{Greeting: "from " + request.UserName}
+	response := UserResponse{
+		UserID:   request.UserID,
+		Username: "a nonny mouse",
+		Email:    "something@somewhere.com",
+	}
 
 	data, err := json.Marshal(response)
 	if err != nil {
-		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	_, err = w.Write(data)
 	if err != nil {
-		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

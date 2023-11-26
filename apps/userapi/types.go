@@ -1,9 +1,11 @@
 package main
 
 type UserRequest struct {
-	UserName string
+	UserID int `json:"userid"`
 }
 
 type UserResponse struct {
-	Greeting string
+	UserID   int    `json:"userid"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
 }

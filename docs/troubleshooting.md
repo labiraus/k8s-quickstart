@@ -59,3 +59,19 @@ Pod to pod calls are managed by kubernetes Services.
 In order to allow docker to copy from go-common for a golang docker build, the context needs to be the ./apps folder. To test the build, run the following:
 
 > docker build -t testbuild -f ./apps/webserverapi/dockerfile ./apps
+
+## Helm libraries
+
+If you make a chang to a helm library chart then you need to increment the version, increment the version in the places where it used, and then in each of the charts that it is used run:
+
+> helm dependency update helm/<template-name>
+
+Then verify with:
+
+> helm dependency list helm/<template-name>
+
+And test the chart with:
+
+> helm template <template-name> helm/<template-name>
+
+Your helm library name cannot have dashes in it

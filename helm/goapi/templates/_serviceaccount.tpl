@@ -1,10 +1,10 @@
-{{- if .Values.serviceAccount.create -}}
+{{ define "goapi.serviceAccount" }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "userapi.serviceAccountName" . }}
+  name: {{ include "goapi.serviceAccountName" . }}
   labels:
-    {{- include "userapi.labels" . | nindent 4 }}
+    {{- include "goapi.labels" . | nindent 4 }}
   {{- with .Values.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

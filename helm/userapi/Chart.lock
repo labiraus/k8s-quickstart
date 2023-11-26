@@ -1,0 +1,6 @@
+dependencies:
+- name: goapi
+  repository: file://../goapi
+  version: 1.0.0
+digest: sha256:af71a292a114b35fedd276632fe63dae1cc6a55ec03ee9367626b7bd41e4ec9f
+generated: "2023-11-26T20:28:58.2280175Z"

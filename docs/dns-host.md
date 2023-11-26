@@ -12,7 +12,7 @@ Access the host file in notepad as administrator:
 
 Add in the following:
 
-```
+``` text
 # Added for k8s testing
 127.0.0.1 local.k8s-demo.com
 # End of section

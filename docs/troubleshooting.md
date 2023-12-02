@@ -75,3 +75,8 @@ And test the chart with:
 > helm template <template-name> helm/<template-name>
 
 Your helm library name cannot have dashes in it
+
+To check if your helm deployment is going to work:
+
+> helm lint helm/<template-name>
+> helm install --dry-run --debug my-release helm/<template-name>

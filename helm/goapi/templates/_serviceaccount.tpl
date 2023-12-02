@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ include "goapi.serviceAccountName" . }}
+  namespace: {{ .Values.namespace }}
   labels:
     {{- include "goapi.labels" . | nindent 4 }}
   {{- with .Values.serviceAccount.annotations }}

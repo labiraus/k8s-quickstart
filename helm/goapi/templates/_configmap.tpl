@@ -1,0 +1,3 @@
+{{ define "goapi.configmap" }}
+
+{{- end -}}

@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "goapi.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
     {{- include "goapi.labels" . | nindent 4 }}
 spec:
@@ -36,16 +37,16 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.targetPort }}
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /liveness
-              port: {{ .Values.service.targetPort }}
+              port: {{ .Values.service.port }}
           readinessProbe:
             httpGet:
               path: /readiness
-              port: {{ .Values.service.targetPort }}
+              port: {{ .Values.service.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

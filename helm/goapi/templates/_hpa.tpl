@@ -1,15 +1,16 @@
+{{ define "goapi.hpa" }}
 {{- if .Values.autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "webserverapi.fullname" . }}
+  name: {{ include "goapi.fullname" . }}
   labels:
-    {{- include "webserverapi.labels" . | nindent 4 }}
+    {{- include "goapi.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "webserverapi.fullname" . }}
+    name: {{ include "goapi.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
@@ -30,3 +31,4 @@ spec:
           averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
+{{- end -}}

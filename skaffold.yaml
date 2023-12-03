@@ -18,7 +18,7 @@ build:
       dockerfile: userapi/dockerfile
 manifests:
   rawYaml:
-      - kubernetes/gateway2.yml
+      - kubernetes/gateway.yml
   helm:
     releases:
       - name: reactapp

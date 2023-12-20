@@ -9,7 +9,7 @@ This repository was designed to enable a developer with minimal understanding of
 
 This repository has been designed to separate code in an easily readable format for demonstration purposes rather than to as a recommended structure. Specifically it doesn't represent good Go repo management (further details see: <https://golang.org/doc/gopath_code>)
 
-All microservices are contained in a folder within the `/apps` folder. They each have a dockerfile that describes how to build that specific microservice
+All microservices are contained in a folder within the `/apps` folder. They each have a dockerfile that describes how to build that specific microservice. The golang applications inherit from a shared go-common library.
 
 The `/kubernetes` configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
 
@@ -111,7 +111,7 @@ Docker is a containerization system. In this solution it is being used to packag
 
 Kubernetes (k8s) is the present front runner for container orchestration. In a production environment it manages a single Cluster which may span multiple physical/virtual machines (Nodes) which each contain a number of Pods which host containers. Kubernetes is then responsible for managing these Nodes and Pods, recreating them if they fail and allowing them to communicate with one another.
 
-In this solution, kubernetes Namespaces are used to group together development code
+More details can be found in the [kubernetes overview](docs/kubernetes.md).
 
 ### Helm
 
@@ -119,31 +119,83 @@ In this solution, kubernetes Namespaces are used to group together development c
 
 Helm is a simple package manager for kubernetes. In this solution it is used for straight forward installation of off the shelf kubernetes components.
 
-### Kind
+More details can be found in the [helm overview](docs/helm.md)
+
+### Platform
+
+Two platforms were investigated for this project: Kind and Minikube. Both are local development and testing tools that allows a developer to mirror a production structure on their local machine.
+
+#### Kind
 
 <https://kind.sigs.k8s.io/>
-Kind (Kubernetes IN Docker) is a tool for running a kubenetes cluster in docker using containers as nodes. It is a local development and testing tool that allows a developer to mirror a production structure on their local machine.
 
-### Linkerd
+Kind (Kubernetes IN Docker) is a tool for running a kubenetes cluster in docker using containers as nodes. The entire cluster runs inside a single docker container.
+
+More details can be found in the [kind overview](docs/kind.md)
+
+#### Minikube
+
+<https://minikube.sigs.k8s.io/docs/>
+
+Minikube presents itself as a local development kubernetes environment that can be run on a number of different platforms beyond just docker. In this repo we use it on docker, podman was investigated but proved unstable.
+
+More details can be found in the [minikube overview](docs/minikube.md)
+
+### Service Mesh
+
+A service mesh on kubernetes provides observability, debugging, and security within a node. 
+
+#### Linkerd
 
 <https://linkerd.io/2/overview/>
-Linkerd is a service mesh for kubernetes which provides observability, debugging, and security within a node. At time of writing there are a number of prominent service mesh solutions including Istio and Consul. Linkerd is demonstrated here as it requires the smallest amount of configuration.
+
+At time of writing there are a number of prominent service mesh solutions including Istio and Consul. Linkerd is demonstrated here as it requires the smallest amount of configuration.
 
 Once Linkerd has been installed on a kubernetes cluster, all pods that are deployed to a namespace with linkerd auto inject enabled will automatically be meshed. The namespace needs to have the following added to its metadata:
 "annotations": { linkerd.io/inject: enabled }
 
-### Ingress Nginx
+#### Istio
+
+<https://istio.io/latest/docs/>
+
+Istio was also investigated as an alternative. The important note is that GCP's Google Kubernetes Engine runs Anthos as a service mesh, which is based on Istio, so using Istio will provide a closer experience.
+
+### Ingress 
+
+Code deployed into Kubernetes cannot be addressed from outside the cluster without ingress being set up.
+
+#### Nginx
 
 <https://kubernetes.github.io/ingress-nginx/>
 
 Nginx is a production grade ingress control system and the frontrunner in its classification. In this solution it is used to load balance and forward traffic from localhost to the appropriate api.
 Nginx has been added to this quickstart solution as it is likely that code deployed into a production environment will sit behind a similar ingress controller.
 
+This was set aside in favour of kubernetes gateway api
+
+#### Istio
+
+<https://istio.io/latest/docs/tasks/traffic-management/ingress/>
+
+Istio has a range of different solutions for ingress including ingress gateways. These were set aside in favour of a mesh agnostic kubernetes gateway.
+
+#### Kubernetes Gateway API
+
+<https://gateway-api.sigs.k8s.io/>
+
+Kubernetes gateway api introduces a new paradigm to ingress. Rather than having a number of ingress controllers, infrastructure providers implement their own platform specific GatewayClass which is managed outside of the solution. Then kubernetes provides a single Gateway component for the whole cluster, with httproute components for individual ingress routes into the system.
+
+The gateway manifest can be found in [kubernetes/gateway.yml](./kubernetes/gateway.yml)
+
+More info can be found in the [documentation](./docs/kubernetes.md#Kubernetes-Gateway-API)
+
 ### Skaffold
 
 <https://skaffold.dev/docs/>
 
 Skaffold is a very simple local development command line CI/CD specifically for Kubernetes. It monitors local files for changes, automatically rebuilds builds containers and deploys them to cluster. It requires very little configuration and allows developers to rapidly prototype their code in cluster.
+
+Once installed, skaffold can be configured in the skaffold.yaml file in the root of this project and run from the command line. It can be run as a single deployment where it will push all code and components, or it run in dev mode where it will monitor files for changes and redeploy them.
 
 ### Scratch Containers
 

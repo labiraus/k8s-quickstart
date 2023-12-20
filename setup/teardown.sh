@@ -12,5 +12,6 @@ kind delete cluster --name kind-local-dev
 echo killing minikube
 minikube stop
 minikube delete --all
-
+minikube purge
+docker rmi gcr.io/k8s-minikube/kicbase:v0.0.42
 echo all done

@@ -1,5 +1,37 @@
 # Troubleshooting
 
+## WSL2
+
+When you try to run wsl, calling wsl directly will take you to the default version. Check the versions on your machine with:
+
+> wsl -l
+
+If you see a version you don't like or if you want to teardown the existing installation and start again then you can uninstall it with:
+
+> wsl --unregister Ubuntu-22.04
+
+To set the newly installed Ubuntu-22.04 as the default, run the following:
+
+> wsl --set-version Ubuntu-22.04 2
+
+To enter wsl simply run `wsl` and to exit run `exit`
+
+### Docker Startup 
+
+To check the status of docker.service use the following
+
+> systemctl status docker.service
+
+To pull the docker.service logs use the following (exit with q)
+
+> journalctl -u docker.service | less -R
+
+If it complains about a startup conflict then it may be that the startup command (ExecStart) may be trying to set the -H host flag and conflicting with the /etc/docker/daemon.json file, check that the systemd docker.service ExecStart startup command has the host file set properly
+
+> cat /lib/systemd/system/docker.service | grep ExecStart
+
+`ExecStart=/usr/bin/dockerd`
+
 ## Installation errors
 
 ### x-kubernetes-validations

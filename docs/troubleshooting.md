@@ -32,6 +32,50 @@ If it complains about a startup conflict then it may be that the startup command
 
 `ExecStart=/usr/bin/dockerd`
 
+### Connecting to Docker
+
+`error during connect: Get "http://localhost:2375/v1.24/containers/json": dial tcp [::1]:2375: connectex: No connection could be made because the target machine actively refused it.`
+
+This error suggests that either docker or socat aren't running on wsl
+
+> wsl -- docker ps
+
+If this doesn't return a response with the first line `CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES` then it means that docker isn't running. If docker runs then open a wsl session and, from a second terminal, try `docker ps` again. If it works now, then the wsl session wasn't being kept alive in the background and you need to run
+
+> wsl
+
+> screen
+
+> Enter
+
+> [Ctrl]+[A] [D]
+
+If running `docker ps` from a windows terminal doesn't work but it does work on wsl then socat probably isn't running, restart it with:
+
+> sudo service socat-startup start
+
+### Deploying to minikube with skaffold
+
+If, after you have minikube set up properly on docker, you get something like the following error during skaffold run
+
+`getting imageID for reactapp:ae09852: error during connect: Get "https://[::1]:32771/v1.24/images/reactapp:ae09852/json": dial tcp [::1]:32771: connectex: No connection could be made because the target machine actively refused it.`
+
+It means that the docker daemon that runs within minikube is refusing access to skaffold. To check the logs do the following:
+
+> minikube ssh
+
+> sudo journalctl -u docker.service
+
+If you have an error message like: 
+
+`Dec 22 12:53:31 minikube dockerd[932]: time="2023-12-22T12:53:31.414410804Z" level=error msg="Handler for POST /v1.42/images/create returned error: Get \"https://registry-1.docker.io/v2/\": dial tcp: lookup registry-1.docker.io on 192.168.49.1:53: server misbehaving"`
+
+Then it might indicate that your minikube docker daemon can't contact registry-1.docker.io to pull images because it can't access the internet. To diagnose this you can check if it's network connectivity with:
+
+> ping 8.8.8.8
+
+
+
 ## Installation errors
 
 ### x-kubernetes-validations

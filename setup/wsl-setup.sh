@@ -65,11 +65,17 @@ socat TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:$DOCKER_DIR/docker.sock &
 EOF
 sudo chmod +x /etc/init.d/socat-startup
 sudo update-rc.d socat-startup defaults
+sudo service socat-startup start
 
 echo -e "\e[31mEdit docker.service pull config from /etc/docker/daemon.json\e[0m"
 sudo sed -i 's|ExecStart=.*|ExecStart=/usr/bin/dockerd|' /lib/systemd/system/docker.service
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+
+echo -e "\e[31mInstall docker buildkit\e[0m"
+mkdir -p ~/.docker/cli-plugins/
+curl -SL https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+chmod a+x ~/.docker/cli-plugins/docker-buildx
 
 echo -e "\e[31mStarting a screen session, detatch with Ctrl+A D, reattached to this with screen -r\e[0m"
 screen

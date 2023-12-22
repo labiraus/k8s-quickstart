@@ -29,16 +29,24 @@ Setting up WSL2 is relatively straightforward on modern windows following <https
 - For simplicity, docker is launched inside wsl rather than a Windows-based Docker client
 - screen is used to keep docker alive after the wsl session has ended
 
-In order to install wsl and docker, first install ubuntu 22.04 on wsl with the `wsl-install.sh` script, then exit and run the `linux-install.sh` script. 
+In order to install wsl and docker, first install ubuntu 22.04 on wsl with the `wsl-install.ps1` script, then exit and run the `wsl-setup.sh` script. 
 
-> bash scripts/wsl-install.sh
+> powershell -File setup/wsl-install.ps1
 
 > exit
 
-> wsl -- scripts/linux-install.sh
+> wsl -- setup/wsl-setup.sh
 
-> source source.sh
+The first script will install the windows docker-cli which requires elevated permissions, then set the docker host and install ubuntu-22.04. The installation will create a unbuntu wsl-2 instance and log into it for the first time so that a new username and password can be setup. Exit this, then run the second script which will install docker on wsl. After this you should be able to communicate with the linux based dockerd running on wsl from the windows system.
 
-The first script will install the windows docker-cli which requires elevated permissions, then set the docker host and install ubuntu-22.04. The installation will create a unbuntu wsl-2 instance and log into it for the first time so that a new username and password can be setup. Exit this, then run the second script which will install docker on wsl. After this you should be able to communicate with the linux based dockerd running on wsl from a windows terminal after running `source source.sh`.
+The reason why `wsl-install.ps1` is a powershell script rather than a bash script is that the below command is needed to set the DOCKER_HOST variable system wide. This allows all tools on the windows system to communicate with the wsl docker host, rather than being an environment variable.  
+
+> setx /M DOCKER_HOST "tcp://localhost:2375"
 
 Because docker is tied to the wsl session, we use `screen` to keep it alive when a wsl session is closed. To start a screen session run `screen` then use `Ctrl-A` and `D` to leave it running in the background. To reattach to a running screen run `screen -r`
+
+> wsl
+> screen
+> [Enter]
+> [Ctrl]+[A] [D]
+> exit

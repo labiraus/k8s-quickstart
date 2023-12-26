@@ -5,6 +5,9 @@ choco upgrade -y chocolatey
 choco install -y docker-cli
 choco upgrade -y docker-cli
 
+mkdir "C:\\Program Files\\Docker\\cli-plugins"
+curl -L -o "C:\\Program Files\\Docker\\cli-plugins\\docker-buildx.exe" https://github.com/docker/buildx/releases/download/v0.12.0/buildx-v0.12.0.windows-amd64.exe
+
 #choco install -y kind
 #choco upgrade -y kind
 

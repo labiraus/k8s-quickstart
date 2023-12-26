@@ -3,8 +3,6 @@ kind: Config
 metadata:
   name: k8s-quickstart
 build:
-  local:
-    push: false
   artifacts:
   - image: reactapp
     context: ./apps/reactapp

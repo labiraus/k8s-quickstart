@@ -31,7 +31,7 @@ Setting up WSL2 is relatively straightforward on modern windows following <https
 
 In order to install wsl and docker, first install ubuntu 22.04 on wsl with the `wsl-install.ps1` script, then exit and run the `wsl-setup.sh` script. 
 
-> powershell -File setup/wsl-install.ps1
+> bash setup/wsl-install.sh
 
 > exit
 

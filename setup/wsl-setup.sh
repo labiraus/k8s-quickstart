@@ -23,7 +23,7 @@ echo "deb [arch=amd64] https://download.docker.com/linux/${ID} ${VERSION_CODENAM
 sudo apt update
 
 echo -e "\e[31mInstall docker\e[0m"
-sudo apt install socat docker-ce docker-ce-cli dbus-user-session docker-compose-plugin screen -y
+sudo apt install socat docker-ce docker-ce-cli dbus-user-session docker-compose-plugin docker-buildx-plugin screen -y
 
 echo -e "\e[31mAdd user to docker group and set up system wide group\e[0m"
 sudo usermod -aG docker $USER
@@ -60,7 +60,6 @@ sudo tee /etc/init.d/socat-startup <<EOF
 # Short-Description: Start socat at boot time
 # Description:       Enable service provided by socat.
 ### END INIT INFO
-
 socat TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:$DOCKER_DIR/docker.sock &
 EOF
 sudo chmod +x /etc/init.d/socat-startup

@@ -34,9 +34,15 @@ If it complains about a startup conflict then it may be that the startup command
 
 ### Connecting to Docker
 
+If you try to do `docker ps` from windows and get the following response
+
 `error during connect: Get "http://localhost:2375/v1.24/containers/json": dial tcp [::1]:2375: connectex: No connection could be made because the target machine actively refused it.`
 
-This error suggests that either docker or socat aren't running on wsl
+This error can be a number of different things:
+1) Docker isn't runnning on WSL
+2) Socat isn't running on WSL
+
+To check if docker is running on WSL, you can do the following:
 
 > wsl -- docker ps
 
@@ -60,7 +66,7 @@ If, after you have minikube set up properly on docker, you get something like th
 
 `getting imageID for reactapp:ae09852: error during connect: Get "https://[::1]:32771/v1.24/images/reactapp:ae09852/json": dial tcp [::1]:32771: connectex: No connection could be made because the target machine actively refused it.`
 
-It means that the docker daemon that runs within minikube is refusing access to skaffold. To check the logs do the following:
+`[::1]` means that the minikube config for the docker daemon is IPv6 instead of IPv4. This is probably because your docker host is set to tcp://localhost:2375 instead of tcp://127.0.0.1:2375 (yes it matters)
 
 > minikube ssh
 
@@ -73,6 +79,24 @@ If you have an error message like:
 Then it might indicate that your minikube docker daemon can't contact registry-1.docker.io to pull images because it can't access the internet. To diagnose this you can check if it's network connectivity with:
 
 > ping 8.8.8.8
+
+This problem may be caused by a misconfigured docker NAT. When the minikube CLI runs `minikube start` it will create a docker network adaptor called 'minikube'. Check first whether you have ingress set up with:
+
+> minikube addons enable ingress
+
+> minikube addons enable ingress-dns
+
+You can test whether docker's connecting to the internet at all by running the following in wsl
+
+> MINIKUBE_ID=$(docker ps -a --format '{{.ID}} {{.Image}}' | grep 'gcr.io/k8s-minikube/kicbase' | awk '{print $1}' | head -n 1)
+
+> docker inspect --format='{{.NetworkSettings}}' $MINIKUBE_ID
+
+> MINIKUBE_NETWORK=$(docker network ls --format '{{.ID}} {{.Name}}' | grep 'minikube' | awk '{print $1}')
+
+> docker network inspect $MINIKUBE_NETWORK
+
+> docker run --rm busybox ping -c 4 8.8.8.8
 
 
 
@@ -111,7 +135,7 @@ Check that the gateway is BEFORE the deployment/setup etc in the skaffold.yaml
 - `kubectl get gateway gateway -n istio-ingress`
   - The result of `PROGRAMMED=True` means that the gateway is configured properly.
   - `kubectl wait -n istio-ingress --for=condition=programmed gateways.gateway.networking.k8s.io gateway`
-- `kubectl get HTTPRoute http`
+- `kubectl get HTTPRoute reactapp`
   - Check the hostname
 - `kubectl get Service reactapp`
 - `kubectl get ServiceAccount reactapp`

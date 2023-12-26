@@ -7,6 +7,12 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+# Set the registry to Taobao's mirror to speed up package installation
+RUN npm config set registry https://registry.npm.taobao.org
+
+# Set the maximum timeout for fetching packages to 10 minutes to avoid timeouts
+RUN npm config set fetch-retry-maxtimeout 600000
+
 # Install dependencies
 RUN npm install
 

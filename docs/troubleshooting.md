@@ -1,6 +1,18 @@
 # Troubleshooting
 
-## WSL2
+This document outlines common mistakes, diagnostic scripts, and likely solutions related to pulling this repo and running it as per instructions not working straight away. If you run into problems that aren't documented here and solve them, please add to this file.
+
+## Installation
+
+Installation begins when you begin trying to get things working and ends when you've got a kubernetes cluster up and running. This section is primarily focussed on the installation of wsl and minikube as they're most likely to cause headaches.
+
+### Windows
+
+The <setup/windows-install.sh> script needs to be run as an administrator in a bash shell. The simplest way to do this is to run git bash as administrator.
+
+If curl for docker-buildx doesn't work then download it manually following <https://github.com/docker/buildx?tab=readme-ov-file#installing> - docker-buildx needs to be installed on whatever machine you're running skaffold from rather than the machine that has the docker daemon running on.
+
+### WSL2
 
 When you try to run wsl, calling wsl directly will take you to the default version. Check the versions on your machine with:
 
@@ -60,6 +72,10 @@ If running `docker ps` from a windows terminal doesn't work but it does work on 
 
 > sudo service socat-startup start
 
+## Deployment
+
+Deployment covers everything from when you have a kubernetes cluster online that you can communicate with `kubectl get pods` and covers anything that might go wrong with the initial setup script or skaffold deployment pipeline
+
 ### Deploying to minikube with skaffold
 
 If, after you have minikube set up properly on docker, you get something like the following error during skaffold run
@@ -98,10 +114,6 @@ You can test whether docker's connecting to the internet at all by running the f
 
 > docker run --rm busybox ping -c 4 8.8.8.8
 
-
-
-## Installation errors
-
 ### x-kubernetes-validations
 
 During istio setup when activating kubernetes gateway api you may get the following error message:
@@ -110,13 +122,19 @@ During istio setup when activating kubernetes gateway api you may get the follow
 
 This implies that your minikube installation is out of date. Try updating to minikube 1.32.0 or later
 
-## Unable to connect
+## Running
+
+Running covers everything that might go wrong with either accessing or altering the cluster once it has deployed successfully for the first time.
+
+### DNS Host
+
+Ensure that you've read <dns-host.md>. After this you should be able to hit the landing page at <http://local.k8s-demo.com/>. Note that https is not set up on the current iteration of the starterkit.
 
 ### Minikube Tunnel
 
-Ensure that minikube tunnel is running. -c will cleanup old tunnels. -p will specify the cluster name
+Ensure that minikube tunnel is running. -c will cleanup old tunnels. -p will specify the cluster name which can be looked up with `minikube profile`
 
-`minikube tunnel -c -p <cluster-name>`
+> minikube tunnel -c -p <cluster-name>
 
 To check if your cluster is connected `curl localhost`
 
@@ -141,9 +159,11 @@ Check that the gateway is BEFORE the deployment/setup etc in the skaffold.yaml
 - `kubectl get ServiceAccount reactapp`
 - `kubectl get Pod -o wide`
 
-If there's nothing there then you may not have run `skaffold run`
+If there's nothing there then you may not have run `skaffold run`. 
 
-`curl -s -I -HHost:reactapp.example.com "http://localhost/"`
+If all of that works then you should be able to connect to the cluster and get the landing page with the following:
+
+> curl -s -I -HHost:reactapp.example.com "http://127.0.0.1/"
 
 ### Pod
 
@@ -154,13 +174,13 @@ To check the logs on a pod, get the pod name and then look up the logs
 
 Pod to pod calls are managed by kubernetes Services. 
 
-## Docker
+### Docker
 
 In order to allow docker to copy from go-common for a golang docker build, the context needs to be the ./apps folder. To test the build, run the following:
 
 > docker build -t testbuild -f ./apps/webserverapi/dockerfile ./apps
 
-## Helm libraries
+### Helm libraries
 
 If you make a chang to a helm library chart then you need to increment the version, increment the version in the places where it used, and then in each of the charts that it is used run:
 

@@ -1,4 +1,4 @@
-# KIND
+# KinD
 
 ## Notes
 

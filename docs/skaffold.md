@@ -24,4 +24,4 @@ This will pull the docker image for skaffold but how do you point skaffold at yo
 
 ### Kubectl
 
-Skaffold can't do local deployment with manifests for kubectl. It instead uses remote manifests and doesn't recognise your local manifests as existing :P
+Skaffold can't do local deployment with manifests for kubectl. It instead uses remote manifests and doesn't recognise your local manifests as existing 

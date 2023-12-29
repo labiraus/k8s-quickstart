@@ -2,7 +2,8 @@
 
 A simple quickstart demo for local microservice development
 
-The idea is to create an out of the box kubernetes cluster with containerized code, ingress control, service mesh, and automatic deployment.
+The idea is to create an out of the box kubernetes cluster with containerized code, ingress control, service mesh, and automatic deployment following industry standards and best practices.
+
 This repository was designed to enable a developer with minimal understanding of infrastructure or platform engineering to go from developing single isolated applications to networking multiple applications together in a local development environment that could accurately mirror production.
 
 ## Repo structure
@@ -265,3 +266,7 @@ This file contains the configuration for skaffold to automatically build and dep
 
 * build.artifacts.image: Name of the docker image to be created. This will correspond to the a deployment's spec.template.spec.containers.image in quickstart.yml
 * build.artifacts.image.docker.dockerfile: Name of the dockerfile to build the image from
+
+## Contribution
+
+If you would like to contribute to this repo then either contact Oliver Hathaway or submit a PR including the explanations of your changes. A list of outstanding work and enhancements can be found in </docs/TODO.md>

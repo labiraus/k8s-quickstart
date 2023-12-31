@@ -72,6 +72,24 @@ If running `docker ps` from a windows terminal doesn't work but it does work on 
 
 > sudo service socat-startup start
 
+### KinD and WSL
+
+Trying to create a kind cluster from a windows installation of kind with docker running on wsl can result in the following error message:
+
+`ERROR: failed to create cluster: failed to generate kubeadm config content: failed to get kubernetes version from node: file should only be one line, got 0 lines`
+
+It is, however, possible to install kind directly on wsl and run the [setup/kind.sh] script from wsl
+
+> wsl
+
+> [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+
+> chmod +x ./kind
+
+> sudo mv ./kind /usr/local/bin/kind
+
+> bash setup/kind.sh
+
 ## Deployment
 
 Deployment covers everything from when you have a kubernetes cluster online that you can communicate with `kubectl get pods` and covers anything that might go wrong with the initial setup script or skaffold deployment pipeline

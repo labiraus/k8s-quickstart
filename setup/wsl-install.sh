@@ -7,3 +7,4 @@ wsl --unregister Ubuntu-22.04
 wsl --update
 wsl --set-default-version 2
 wsl --install -d Ubuntu-22.04
+wsl -- setup/wsl-setup.sh

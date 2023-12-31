@@ -29,4 +29,3 @@ echo Running Skaffold
 skaffold run
 
 echo All deployed - starting tunnel
-minikube tunnel -c

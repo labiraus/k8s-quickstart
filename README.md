@@ -1,6 +1,6 @@
 # k8s-quickstart
 
-A simple quickstart demo for local microservice development
+A straight forward turnkey solution for running a kubernetes cluster on a local machine.
 
 The idea is to create an out of the box kubernetes cluster with containerized code, ingress control, service mesh, and automatic deployment following industry standards and best practices.
 
@@ -10,25 +10,44 @@ This repository was designed to enable a developer with minimal understanding of
 
 This repository has been designed to separate code in an easily readable format for demonstration purposes rather than to as a recommended structure. Specifically it doesn't represent good Go repo management (further details see: <https://golang.org/doc/gopath_code>)
 
-All microservices are contained in a folder within the `/apps` folder. They each have a dockerfile that describes how to build that specific microservice. The golang applications inherit from a shared go-common library.
+All microservices are contained in a folder within the [apps](apps/) folder. They each have a dockerfile that describes how to build that specific microservice. The golang applications inherit from a shared [go-common](apps/go-common/) library.
 
-The `/kubernetes` configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
+The [docs folder](docs/) contains explanations of different tools and technologies employed in this repo, this includes a [TODO list](docs/TODO.md) and [troubleshooting guide](docs/troubleshooting.md)
 
-The `/helm` charts are found in the helm folder. This contains a standard golang microservice chart that sets up fluentd for both logging and stats.
+The [kubernetes folder](kubernetes/) configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
 
-The `/scripts` folder contains bash scripts that allow you to starup/teardown an environment and perform some of the more common operations that are not simple cli calls.
+The [helm folder](helm/) contains helm charts. This contains a standard golang microservice chart that sets up fluentd for both logging and stats.
+
+The [setup folder](setup/) contains setup scripts for installing and setting up the initial kubernetes cluster, mesh, and other tools. These scripts are designed to be modular so that a KinD cluster can be deployed on Docker Desktop or minikube can be deployed on WSL and still have the same kubernetes environment.
+
+The [scripts folder](scripts/) contains bash scripts that allow you to interact with an environment and perform some of the more common operations that are not simple cli calls.
 
 ## Quickstart
 
-To try this out, clone it into $GOPATH/src/k8s-quickstart
+To try this out, clone it into $GOPATH/src/k8s-quickstart. First follow the instructions for your operating system, then pick the kubernetes deployment, finally run the common [setup script](setup/setup.sh).
 
-### Windows
+### Operating System
+
+#### Windows
 
 install chocolatey: <https://chocolatey.org/install>
 
-Run the bash script: `scripts/windows-install.sh` with elevated permissions
+Run the bash script: [setup/windows-install.sh](setup/windows-install.sh) with elevated permissions to install pre-requisites
 
-### Linux
+##### Docker Desktop
+
+Docker desktop is a windows tool that will allow you to run linux containers on windows. Install docker desktop <https://docs.docker.com/desktop/install/windows-install/> and start it.
+
+##### WSL
+
+Windows Subsystem for Linux allows you to run linux containers without docker desktop. The [wsl-install.sh](setup/wsl-install.sh) script includes a call to [wsl-setup.sh](setup/wsl-install.sh)
+
+> bash setup/wsl=install.sh
+> exit
+> `Alt+A` `D`
+> exit
+
+#### Linux
 
 Due to the variety of distributions of Linux, there's no single way to install all of the tools required.
 As such, this system will require:
@@ -42,6 +61,26 @@ As such, this system will require:
 * mesh, choose one:
   * istio: <https://istio.io/latest/docs/setup/getting-started//>
   * linkerd2: <https://linkerd.io/2.10/getting-started/>
+
+### Deployment
+
+#### Minikube
+
+Minikube takes a while to install the first time and needs to have a tunnel opened to connect to any pods within it. For simplicity's sake the setup script can be rerun to restart the cluster if it's stopped or after a reboot.
+
+> bash setup/minikube.sh
+
+#### KinD
+
+KinD's chocolatey installation depends on Docker Desktop. The windows install [script](setup/windows-install.sh) downloads the kind executable to chocolatey bin directory so that it can be accessed via the path variable.
+
+If you're using wsl then the setup script will need to be run on wsl and not windows. Kind doesn't work cross platform very well.
+
+> bash setup/kind.sh
+
+#### K3s
+
+## Overview
 
 ### Skaffold
 

@@ -1,5 +1,3 @@
-minikube delete
-docker context use default
 minikube start \
     --extra-config=apiserver.service-node-port-range=1-65535 \
     --memory=8g \
@@ -8,3 +6,4 @@ minikube start \
 minikube addons enable metrics-server
 minikube addons enable dashboard
 minikube addons enable registry
+minikube tunnel -c

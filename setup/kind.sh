@@ -1,6 +1,6 @@
 docker context use default
 
-cat <<EOF | kind create cluster --name kind-local-dev --config=-
+cat <<EOF | kind create cluster --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:

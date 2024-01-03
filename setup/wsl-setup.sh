@@ -61,6 +61,8 @@ sudo tee /etc/init.d/socat-startup <<EOF
 # Description:       Enable service provided by socat.
 ### END INIT INFO
 socat TCP-LISTEN:2375,reuseaddr,fork UNIX-CONNECT:$DOCKER_DIR/docker.sock &
+# This is for kind
+socat TCP-LISTEN:8080,fork TCP:172.19.255.201:80 &
 EOF
 sudo chmod +x /etc/init.d/socat-startup
 sudo update-rc.d socat-startup defaults

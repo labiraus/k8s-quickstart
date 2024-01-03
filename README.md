@@ -42,7 +42,7 @@ Docker desktop is a windows tool that will allow you to run linux containers on 
 
 Windows Subsystem for Linux allows you to run linux containers without docker desktop. The [wsl-install.sh](setup/wsl-install.sh) script includes a call to [wsl-setup.sh](setup/wsl-install.sh)
 
-> bash setup/wsl=install.sh
+> setup/wsl-install.sh
 
 > exit
 
@@ -71,7 +71,7 @@ As such, this system will require:
 
 Minikube takes a while to install the first time and needs to have a tunnel opened to connect to any pods within it. For simplicity's sake the setup script can be rerun to restart the cluster if it's stopped or after a reboot.
 
-> bash setup/minikube.sh
+> setup/minikube.sh
 
 #### Kind
 

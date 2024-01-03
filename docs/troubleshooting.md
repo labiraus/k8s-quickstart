@@ -175,7 +175,9 @@ If `kubectl get gateway gateway -n istio-ingress` has PROGRAMMED false then the 
 
 > kubectl logs -l app=istiod -n istio-system
 
-You can check the status of the service that supports the ingress gateway with the following. If `EXTERNAL-IP` is `<pending>` then it means that the platform doesn't have a load balancer installed on it.
+> kubectl logs -l app.kubernetes.io/name=metallb,app.kubernetes.io/component=controller -n istio-ingress
+
+You can check the status of the service that supports the ingress gateway with the following. If `EXTERNAL-IP` is `<pending>` then it means that the platform doesn't have a load balancer working.
 
 > kubectl get service istio-ingressgateway -n istio-ingress
 
@@ -190,6 +192,12 @@ And check that the gatewayClassName matches a deployed GatewayClass (both should
 To jog a gateway config that gets stuck you can update it with a meaningless annotation 
 
 > kubectl annotate gateway gateway -n istio-ingress trigger-sync=$(date +%s)
+
+If you're using kind and metalLB it's worth checking whether the IP Address in the metalLB config match the ip addresses on the docker network bridge with:
+
+> docker network inspect -f '{{.IPAM.Config}}' kind
+
+EG if the address pool is is `172.19.0.0/16` then the address range to use in the IPAdressPool would be `172.19.255.200-172.19.255.250`
 
 ### Pod
 

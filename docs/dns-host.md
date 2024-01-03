@@ -22,6 +22,8 @@ Flush the dns
 
 > ipconfig /flushdns
 
+To enable forwarding to 
+
 ## Mac
 
 Access the host file using command line
@@ -62,10 +64,24 @@ Add in the following:
 
 For Ubuntu/Debian:
 
-> sudo service dns-clean restart.
+> sudo service dns-clean restart
 
 For other distros:
 
 > sudo service nscd restart 
+
 > sudo systemctl restart nscd.service
+
 > nscd -I hosts
+
+To enable calls to be forwarded from windows 127.0.0.1 to a wsl kind cluster you will need to have socat running on wsl (which is included in the [wsl setup script](setup/wsl-setup.sh)):
+
+> socat TCP-LISTEN:8080,fork TCP:172.19.255.201:80 &
+
+This will enable calls from 127.0.0.1:8080 on windows to hit the wsl docker ip address, but will require the following to be run on windows as admin to forward calls from port 80, to 8080, to wsl:
+
+> netsh interface portproxy add v4tov4 listenport=80 listenaddress=127.0.0.1 connectport=8080 connectaddress=127.0.0.1
+
+This setting can be removed with the following:
+
+> netsh interface portproxy delete v4tov4 listenport=80 listenaddress=127.0.0.1

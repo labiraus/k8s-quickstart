@@ -1,3 +1,5 @@
+#!/bin/bash
+
 kind delete cluster
 
 docker context use default
@@ -28,21 +30,20 @@ helm repo update
 kubectl create namespace istio-ingress
 helm install metallb metallb/metallb -n istio-ingress --wait
 
-helm repo add metallb https://metallb.github.io/metallb
-helm install metallb metallb/metallb
-
 
 cat <<EOF | kubectl apply -f-
-apiVersion: v1
-kind: ConfigMap
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
 metadata:
+  name: example
   namespace: istio-ingress
-  name: metallb-config
-data:
-  config: |
-    address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-      - 172.17.1.0/24
+spec:
+  addresses:
+  - 172.19.255.200-172.19.255.250
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: empty
+  namespace: istio-ingress
 EOF

@@ -22,6 +22,10 @@ All of the resources in a manifest can be deleted with the following command:
 
 ## Kubernetes Gateway API
 
+The kubernetes gateway api is the new (Q4 2023) way of configuring cluster ingress <https://gateway-api.sigs.k8s.io/>. It ties together the infrastructure level GatewayClass, the cluster level Gateway, and then HTTPRoutes that map urls to specific services and down to pods.
+
+When looking up information about kubernetes ingress, older documentation will refer to implementation specific ingress controllers. Kubernetes Gateway API is designed to be generic across all platforms so the GatewayClass is managed by the provider specific kubernetes platform, and we use the same vendor agnostic Gateway.
+
 ## Notes
 
 The source.sh script at the root of this project adds aliases the k alias for kubectl in a bash terminal, this is typically stored in a .bashrc file or similar. To add the alias to your terminal run:

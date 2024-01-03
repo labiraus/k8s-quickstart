@@ -23,14 +23,9 @@ kubectl create namespace k8s-demo
 kubectl label namespace k8s-demo istio-injection=enabled
 
 echo -e "\e[34mCreate ingress gateway (please be patient)\e[0m"
-helm install istio-ingressgateway istio/gateway -n istio-ingress --wait --debug
-#kubectl wait --for=condition=ready pods -n istio-ingress -l app=istio-ingressgateway
-
-#echo -e "\e[34mAdding Kubernetes Gateway API\e[0m"
-#kubectl apply -f kubernetes/gateway.yml
-#kubectl wait -n istio-ingress --for=condition=programmed gateways.gateway.networking.k8s.io gateway
+helm install istio-ingressgateway istio/gateway -n istio-ingress --wait
 
 echo -e "\e[34mRunning Skaffold\e[0m"
-#skaffold run
+skaffold run
 
 echo -e "\e[34mAll deployed!\e[0m"

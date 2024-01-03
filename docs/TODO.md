@@ -30,6 +30,7 @@ This document lists all the potential enhancements to be made to this repo.
 
 ## General
 
+- [ ] helmfile
 - [ ] HTTPS ingress
 - [ ] Secret maanagment
 - [ ] Stateful sets

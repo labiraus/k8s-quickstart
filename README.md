@@ -1,40 +1,87 @@
 # k8s-quickstart
 
-A simple quickstart demo for local microservice development
+A straight forward turnkey solution for running a kubernetes cluster on a local machine.
 
-The idea is to create an out of the box kubernetes cluster with containerized code, ingress control, service mesh, and automatic deployment.
+The idea is to create an out of the box kubernetes cluster with containerized code, ingress control, service mesh, and automatic deployment following industry standards and best practices.
+
 This repository was designed to enable a developer with minimal understanding of infrastructure or platform engineering to go from developing single isolated applications to networking multiple applications together in a local development environment that could accurately mirror production.
 
 ## Repo structure
 
 This repository has been designed to separate code in an easily readable format for demonstration purposes rather than to as a recommended structure. Specifically it doesn't represent good Go repo management (further details see: <https://golang.org/doc/gopath_code>)
 
-All microservices are contained in a folder within the `/apps` folder. They each have a dockerfile that describes how to build that specific microservice
+All microservices are contained in a folder within the [apps](apps/) folder. They each have a dockerfile that describes how to build that specific microservice. The golang applications inherit from a shared [go-common](apps/go-common/) library.
 
-The `/kubernetes` configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
+The [docs folder](docs/) contains explanations of different tools and technologies employed in this repo, this includes a [TODO list](docs/TODO.md) and [troubleshooting guide](docs/troubleshooting.md)
 
-The `/scripts` folder contains bash scripts that allow you to starup/teardown an environment and perform some of the more common operations that are not simple cli calls.
+The [kubernetes folder](kubernetes/) configuration is found in the kubernetes folder. This can be split into multiple configuration files that are registered with skaffold.
+
+The [helm folder](helm/) contains helm charts. This contains a standard golang microservice chart that sets up fluentd for both logging and stats.
+
+The [setup folder](setup/) contains setup scripts for installing and setting up the initial kubernetes cluster, mesh, and other tools. These scripts are designed to be modular so that a KinD cluster can be deployed on Docker Desktop or minikube can be deployed on WSL and still have the same kubernetes environment.
+
+The [scripts folder](scripts/) contains bash scripts that allow you to interact with an environment and perform some of the more common operations that are not simple cli calls.
 
 ## Quickstart
 
-To try this out, clone it into $GOPATH/src/k8s-quickstart
+To try this out, clone it into $GOPATH/src/k8s-quickstart. First follow the instructions for your operating system, then pick the kubernetes deployment, finally run the common [setup script](setup/setup.sh).
 
-### Windows
+### Operating System
+
+#### Windows
 
 install chocolatey: <https://chocolatey.org/install>
 
-Run the bash script: `scripts/windows-install.sh` with elevated permissions
+Run the bash script: [setup/windows-install.sh](setup/windows-install.sh) with elevated permissions to install pre-requisites
 
-### Linux
+##### Docker Desktop
+
+Docker desktop is a windows tool that will allow you to run linux containers on windows. Install docker desktop <https://docs.docker.com/desktop/install/windows-install/> and start it.
+
+##### WSL
+
+Windows Subsystem for Linux allows you to run linux containers without docker desktop. The [wsl-install.sh](setup/wsl-install.sh) script includes a call to [wsl-setup.sh](setup/wsl-install.sh)
+
+> setup/wsl-install.sh
+
+> exit
+
+> `Alt+A` `D`
+
+> exit
+
+#### Linux
 
 Due to the variety of distributions of Linux, there's no single way to install all of the tools required.
 As such, this system will require:
 
 * docker: <https://docs.docker.com/engine/install/>
-* kind: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
+* local kubernetes cluster, choose one:
+  * kind: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
+  * minikube: <https://minikube.sigs.k8s.io/docs/start/>
 * kubernetes-helm: <https://helm.sh/docs/intro/install/>
 * skaffold: <https://skaffold.dev/docs/install/>
-* linkerd2: <https://linkerd.io/2.10/getting-started/>
+* mesh, choose one:
+  * istio: <https://istio.io/latest/docs/setup/getting-started//>
+  * linkerd2: <https://linkerd.io/2.10/getting-started/>
+
+### Deployment
+
+#### Minikube
+
+Minikube takes a while to install the first time and needs to have a tunnel opened to connect to any pods within it. For simplicity's sake the setup script can be rerun to restart the cluster if it's stopped or after a reboot.
+
+> setup/minikube.sh
+
+#### Kind
+
+Kind only works when it's on the same environment as docker. If you're running wsl then the [setup script](setup/kind.sh) should be run in a wsl terminal after the [linux install script](setup/linux-install.sh). Since scaffold relies on kind to connect to the containerd daemon, everything needs to be run in wsl. If you are running Docker Desktop then everything should just work.
+
+> choco install -y kind
+
+#### K3s
+
+## Overview
 
 ### Skaffold
 
@@ -53,8 +100,9 @@ The scripts folder has a number of useful scripts for interacting with kubernete
 
 #### Setup
 
-Once all the tools are installed and docker is running, the setup script will create a kind cluster and install linkerd and nginx
-Run the bash script: `scripts/setup.sh`
+Once all the tools are installed and docker is running, the setup script will create a kind cluster and install istio or linkerd and nginx
+Run the bash script: `scripts/setup-istio.sh`
+Run the bash script: `scripts/setup-linkerd.sh`
 Throughout the cluster name `local-dev` is used.
 
 #### Attach
@@ -104,7 +152,7 @@ Docker is a containerization system. In this solution it is being used to packag
 
 Kubernetes (k8s) is the present front runner for container orchestration. In a production environment it manages a single Cluster which may span multiple physical/virtual machines (Nodes) which each contain a number of Pods which host containers. Kubernetes is then responsible for managing these Nodes and Pods, recreating them if they fail and allowing them to communicate with one another.
 
-In this solution, kubernetes Namespaces are used to group together development code
+More details can be found in the [kubernetes overview](docs/kubernetes.md).
 
 ### Helm
 
@@ -112,31 +160,83 @@ In this solution, kubernetes Namespaces are used to group together development c
 
 Helm is a simple package manager for kubernetes. In this solution it is used for straight forward installation of off the shelf kubernetes components.
 
-### Kind
+More details can be found in the [helm overview](docs/helm.md)
+
+### Platform
+
+Two platforms were investigated for this project: Kind and Minikube. Both are local development and testing tools that allows a developer to mirror a production structure on their local machine.
+
+#### Kind
 
 <https://kind.sigs.k8s.io/>
-Kind (Kubernetes IN Docker) is a tool for running a kubenetes cluster in docker using containers as nodes. It is a local development and testing tool that allows a developer to mirror a production structure on their local machine.
 
-### Linkerd
+Kind (Kubernetes IN Docker) is a tool for running a kubenetes cluster in docker using containers as nodes. The entire cluster runs inside a single docker container.
+
+More details can be found in the [kind overview](docs/kind.md)
+
+#### Minikube
+
+<https://minikube.sigs.k8s.io/docs/>
+
+Minikube presents itself as a local development kubernetes environment that can be run on a number of different platforms beyond just docker. In this repo we use it on docker, podman was investigated but proved unstable.
+
+More details can be found in the [minikube overview](docs/minikube.md)
+
+### Service Mesh
+
+A service mesh on kubernetes provides observability, debugging, and security within a node. 
+
+#### Linkerd
 
 <https://linkerd.io/2/overview/>
-Linkerd is a service mesh for kubernetes which provides observability, debugging, and security within a node. At time of writing there are a number of prominent service mesh solutions including Istio and Consul. Linkerd is demonstrated here as it requires the smallest amount of configuration.
+
+At time of writing there are a number of prominent service mesh solutions including Istio and Consul. Linkerd is demonstrated here as it requires the smallest amount of configuration.
 
 Once Linkerd has been installed on a kubernetes cluster, all pods that are deployed to a namespace with linkerd auto inject enabled will automatically be meshed. The namespace needs to have the following added to its metadata:
 "annotations": { linkerd.io/inject: enabled }
 
-### Ingress Nginx
+#### Istio
+
+<https://istio.io/latest/docs/>
+
+Istio was also investigated as an alternative. The important note is that GCP's Google Kubernetes Engine runs Anthos as a service mesh, which is based on Istio, so using Istio will provide a closer experience.
+
+### Ingress 
+
+Code deployed into Kubernetes cannot be addressed from outside the cluster without ingress being set up.
+
+#### Nginx
 
 <https://kubernetes.github.io/ingress-nginx/>
 
 Nginx is a production grade ingress control system and the frontrunner in its classification. In this solution it is used to load balance and forward traffic from localhost to the appropriate api.
 Nginx has been added to this quickstart solution as it is likely that code deployed into a production environment will sit behind a similar ingress controller.
 
+This was set aside in favour of kubernetes gateway api
+
+#### Istio
+
+<https://istio.io/latest/docs/tasks/traffic-management/ingress/>
+
+Istio has a range of different solutions for ingress including ingress gateways. These were set aside in favour of a mesh agnostic kubernetes gateway.
+
+#### Kubernetes Gateway API
+
+<https://gateway-api.sigs.k8s.io/>
+
+Kubernetes gateway api introduces a new paradigm to ingress. Rather than having a number of ingress controllers, infrastructure providers implement their own platform specific GatewayClass which is managed outside of the solution. Then kubernetes provides a single Gateway component for the whole cluster, with httproute components for individual ingress routes into the system.
+
+The gateway manifest can be found in [kubernetes/gateway.yml](./kubernetes/gateway.yml)
+
+More info can be found in the [documentation](./docs/kubernetes.md#Kubernetes-Gateway-API)
+
 ### Skaffold
 
 <https://skaffold.dev/docs/>
 
 Skaffold is a very simple local development command line CI/CD specifically for Kubernetes. It monitors local files for changes, automatically rebuilds builds containers and deploys them to cluster. It requires very little configuration and allows developers to rapidly prototype their code in cluster.
+
+Once installed, skaffold can be configured in the skaffold.yaml file in the root of this project and run from the command line. It can be run as a single deployment where it will push all code and components, or it run in dev mode where it will monitor files for changes and redeploy them.
 
 ### Scratch Containers
 
@@ -206,3 +306,7 @@ This file contains the configuration for skaffold to automatically build and dep
 
 * build.artifacts.image: Name of the docker image to be created. This will correspond to the a deployment's spec.template.spec.containers.image in quickstart.yml
 * build.artifacts.image.docker.dockerfile: Name of the dockerfile to build the image from
+
+## Contribution
+
+If you would like to contribute to this repo then either contact Oliver Hathaway or submit a PR including the explanations of your changes. A list of outstanding work and enhancements can be found in </docs/TODO.md>

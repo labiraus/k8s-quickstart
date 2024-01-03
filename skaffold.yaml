@@ -1,0 +1,41 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: k8s-quickstart
+build:
+  local:
+    push: false
+  artifacts:
+  - image: reactapp
+    context: ./apps/reactapp
+    docker:
+      dockerfile: dockerfile
+  - image: webserverapi
+    context: ./apps
+    docker:
+      dockerfile: webserverapi/dockerfile
+  - image: userapi
+    context: ./apps
+    docker:
+      dockerfile: userapi/dockerfile
+manifests:
+  rawYaml:
+      - kubernetes/gateway.yml
+  helm:
+    releases:
+      - name: reactapp
+        chartPath: helm/reactapp
+        valuesFiles:
+          - helm/reactapp/values.yaml
+      - name: webserverapi
+        chartPath: helm/webserverapi
+        valuesFiles:
+          - helm/webserverapi/values.yaml
+      - name: userapi
+        chartPath: helm/userapi
+        valuesFiles:
+          - helm/userapi/values.yaml
+profiles:
+  - name: gcb
+    build:
+      googleCloudBuild: {}

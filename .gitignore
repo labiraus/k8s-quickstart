@@ -16,3 +16,5 @@
 # vendor/
 
 node_modules/
+
+kind-config

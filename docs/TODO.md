@@ -1,6 +1,6 @@
 # TODO
 
-This document lists all the potential enhancements to be made to this repo. 
+This document lists all the potential enhancements to be made to this repo.
 
 ## Platform
 
@@ -10,7 +10,6 @@ This document lists all the potential enhancements to be made to this repo.
 - [ ] Minikube on HyperV
 - [ ] Mac specific installation instructions
 - [ ] Linux specific installation instructions
-- [ ] 
 
 ## Mesh
 

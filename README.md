@@ -43,8 +43,11 @@ Docker desktop is a windows tool that will allow you to run linux containers on 
 Windows Subsystem for Linux allows you to run linux containers without docker desktop. The [wsl-install.sh](setup/wsl-install.sh) script includes a call to [wsl-setup.sh](setup/wsl-install.sh)
 
 > bash setup/wsl=install.sh
+
 > exit
+
 > `Alt+A` `D`
+
 > exit
 
 #### Linux
@@ -70,13 +73,11 @@ Minikube takes a while to install the first time and needs to have a tunnel open
 
 > bash setup/minikube.sh
 
-#### KinD
+#### Kind
 
-KinD's chocolatey installation depends on Docker Desktop. The windows install [script](setup/windows-install.sh) downloads the kind executable to chocolatey bin directory so that it can be accessed via the path variable.
+Kind only works when it's on the same environment as docker. If you're running wsl then the [setup script](setup/kind.sh) should be run in a wsl terminal after the [linux install script](setup/linux-install.sh). Since scaffold relies on kind to connect to the containerd daemon, everything needs to be run in wsl. If you are running Docker Desktop then everything should just work.
 
-If you're using wsl then the setup script will need to be run on wsl and not windows. Kind doesn't work cross platform very well.
-
-> bash setup/kind.sh
+> choco install -y kind
 
 #### K3s
 

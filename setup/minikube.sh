@@ -6,4 +6,5 @@ minikube start \
 minikube addons enable metrics-server
 minikube addons enable dashboard
 minikube addons enable registry
+kubectl create namespace istio-ingress
 minikube tunnel -c

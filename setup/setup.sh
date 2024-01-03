@@ -1,31 +1,36 @@
 #!/bin/bash
 
-echo Adding Kubernetes Gateway API CRD
-# This may not be needed in the future
-kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || { kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.0.0" | kubectl apply -f -; }
-
-echo Pulling istio into helm repo
+echo -e "\e[34mAdding Kubernetes Gateway API CRD\e[0m"
+# This may not be needed in the future, but Kubernetes Gateway API has only just come out of beta
+kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
+    { kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.0.0" | kubectl apply -f -; }
 
 # Add istio to helm
+echo -e "\e[34mPulling istio into helm repo\e[0m"
 helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
 
-echo Installing Istio with helm
 # Install istio helm chart
+echo -e "\e[34mInstalling Istio with helm\e[0m"
 kubectl create namespace istio-system
 helm install istio-base istio/base -n istio-system --set defaultRevision=default --wait
 helm install istiod istio/istiod -n istio-system --wait
-kubectl label namespace default istio-injection=enabled
 
+# Enable istio injection
+echo -e "\e[34mAdding injection namespace\e[0m"
+kubectl label namespace default istio-injection=enabled
 kubectl create namespace k8s-demo
 kubectl label namespace k8s-demo istio-injection=enabled
 
-echo Create ingress gateway
-kubectl create namespace istio-ingress
-helm install istio-ingressgateway istio/gateway -n istio-ingress
-kubectl wait --for=condition=ready pods -n istio-ingress -l app=istio-ingressgateway
+echo -e "\e[34mCreate ingress gateway (please be patient)\e[0m"
+helm install istio-ingressgateway istio/gateway -n istio-ingress --wait --debug
+#kubectl wait --for=condition=ready pods -n istio-ingress -l app=istio-ingressgateway
 
-echo Running Skaffold
-skaffold run
+#echo -e "\e[34mAdding Kubernetes Gateway API\e[0m"
+#kubectl apply -f kubernetes/gateway.yml
+#kubectl wait -n istio-ingress --for=condition=programmed gateways.gateway.networking.k8s.io gateway
 
-echo All deployed - starting tunnel
+echo -e "\e[34mRunning Skaffold\e[0m"
+#skaffold run
+
+echo -e "\e[34mAll deployed!\e[0m"

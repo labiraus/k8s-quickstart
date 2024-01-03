@@ -74,21 +74,7 @@ If running `docker ps` from a windows terminal doesn't work but it does work on 
 
 ### KinD and WSL
 
-Trying to create a kind cluster from a windows installation of kind with docker running on wsl can result in the following error message:
-
-`ERROR: failed to create cluster: failed to generate kubeadm config content: failed to get kubernetes version from node: file should only be one line, got 0 lines`
-
-It is, however, possible to install kind directly on wsl and run the [setup/kind.sh] script from wsl
-
-> wsl
-
-> [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
-
-> chmod +x ./kind
-
-> sudo mv ./kind /usr/local/bin/kind
-
-> bash setup/kind.sh
+If you're running docker on WSL then kind will only work on wsl. 
 
 ## Deployment
 
@@ -166,7 +152,7 @@ if the cluster is running (whether or not the tunnel is running) you'll get the 
 
 ### Skaffold
 
-Check that the gateway is BEFORE the deployment/setup etc in the skaffold.yaml
+Check that the gateway manifest is BEFORE the deployment/setup etc in the skaffold.yaml
 
 - `kubectl get gateway gateway -n istio-ingress`
   - The result of `PROGRAMMED=True` means that the gateway is configured properly.
@@ -181,13 +167,36 @@ If there's nothing there then you may not have run `skaffold run`.
 
 If all of that works then you should be able to connect to the cluster and get the landing page with the following:
 
-> curl -s -I -HHost:reactapp.example.com "http://127.0.0.1/"
+> curl -s -I -HHost:local.k8s-demo.com "http://127.0.0.1/"
+
+#### Gateway
+
+If `kubectl get gateway gateway -n istio-ingress` has PROGRAMMED false then the gateway's configuration hasn't propagated down to the underlying platform. The problem is likely platform specific and will depend on how kind/minikube/k3s/docker desktop kubernetes or your remote cluster is setup. You can check the logs with:
+
+> kubectl logs -l app=istiod -n istio-system
+
+You can check the status of the service that supports the ingress gateway with the following. If `EXTERNAL-IP` is `<pending>` then it means that the platform doesn't have a load balancer installed on it.
+
+> kubectl get service istio-ingressgateway -n istio-ingress
+
+You can pull the actual deployed configuration with:
+
+> kubectl get gateway gateway -n istio-ingress -o yaml
+
+And check that the gatewayClassName matches a deployed GatewayClass (both should be istio):
+
+> kubectl get gatewayclass
+
+To jog a gateway config that gets stuck you can update it with a meaningless annotation 
+
+> kubectl annotate gateway gateway -n istio-ingress trigger-sync=$(date +%s)
 
 ### Pod
 
 To check the logs on a pod, get the pod name and then look up the logs
 
 > kubectl get pods
+
 > kubectl logs <pod-name>
 
 Pod to pod calls are managed by kubernetes Services. 
